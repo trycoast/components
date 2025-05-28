@@ -1,0 +1,9 @@
+{$DOMAIN} {
+  reverse_proxy app:80
+
+  encode gzip
+}
+
+http:// {
+  respond "Access Denied" 403
+}

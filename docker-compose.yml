@@ -7,3 +7,21 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile.template:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    env_file:
+      - .env
+
+volumes:
+  caddy_data:
+  caddy_config:
