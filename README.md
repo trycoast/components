@@ -1,5 +1,12 @@
 # registry-template
 
+1. Add your component to the registry/default/{blocks | ui}/{component} folder.
+2. Add your component to the registry.json (don't forget to include dependencies)
+3. Start the server: `yarn dev` | `pnpm dev`
+4. **Optional:** Install your component to an external project: `npx shadcn add http://localhost:3000/r/{component}.json`
+
+## ShadCN Registry
+
 You can use the `shadcn` CLI to run your own component registry. Running your own
 component registry allows you to distribute your custom components, hooks, pages, and
 other files to any React project.

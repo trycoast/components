@@ -78,13 +78,13 @@
     },
     {
       "name": "layout",
-      "type": "registry:component",
+      "type": "registry:ui",
       "title": "Layout",
       "description": "A layout component to be used at the root of every page.",
       "files": [
         {
           "path": "registry/default/ui/layout.tsx",
-          "type": "registry:component"
+          "type": "registry:ui"
         }
       ]
     }

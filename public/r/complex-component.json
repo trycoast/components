@@ -4,22 +4,24 @@
   "type": "registry:component",
   "title": "Complex Component",
   "description": "A complex component showing hooks, libs and components.",
-  "registryDependencies": ["card"],
+  "registryDependencies": [
+    "card"
+  ],
   "files": [
     {
       "path": "registry/default/blocks/complex-component/page.tsx",
-      "content": "import { cache } from \"react\"\r\nimport { PokemonCard } from \"@/registry/default/blocks/complex-component/components/pokemon-card\"\r\nimport { getPokemonList } from \"@/registry/default/blocks/complex-component/lib/pokemon\"\r\nconst getCachedPokemonList = cache(getPokemonList)\r\n\r\nexport default async function Page() {\r\n  const pokemons = await getCachedPokemonList({ limit: 12 })\r\n\r\n  if (!pokemons) {\r\n    return null\r\n  }\r\n\r\n  return (\r\n    <div className=\"mx-auto w-full max-w-2xl px-4\">\r\n      <div className=\"grid grid-cols-2 gap-4 py-10 sm:grid-cols-3 md:grid-cols-4\">\r\n        {pokemons.results.map((p) => (\r\n          <PokemonCard key={p.name} name={p.name} />\r\n        ))}\r\n      </div>\r\n    </div>\r\n  )\r\n}\r\n",
+      "content": "import { cache } from \"react\";\r\nimport { PokemonCard } from \"@/registry/default/blocks/complex-component/components/pokemon-card\";\r\nimport { getPokemonList } from \"@/registry/default/blocks/complex-component/lib/pokemon\";\r\nconst getCachedPokemonList = cache(getPokemonList);\r\n\r\nexport default async function Page() {\r\n  const pokemons = await getCachedPokemonList({ limit: 12 });\r\n\r\n  if (!pokemons) {\r\n    return null;\r\n  }\r\n\r\n  return (\r\n    <div className=\"mx-auto w-full max-w-2xl px-4\">\r\n      <div className=\"grid grid-cols-2 gap-4 py-10 sm:grid-cols-3 md:grid-cols-4\">\r\n        {pokemons.results.map((p) => (\r\n          <PokemonCard key={p.name} name={p.name} />\r\n        ))}\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
       "type": "registry:page",
       "target": "app/pokemon/page.tsx"
     },
     {
       "path": "registry/default/blocks/complex-component/components/pokemon-card.tsx",
-      "content": "import { cache } from \"react\"\r\nimport { getPokemon } from \"@/registry/default/blocks/complex-component/lib/pokemon\"\r\nimport { Card, CardContent } from \"@/registry/default/ui/card\"\r\nimport { PokemonImage } from \"@/registry/default/blocks/complex-component/components/pokemon-image\"\r\n\r\nconst cachedGetPokemon = cache(getPokemon)\r\n\r\nexport async function PokemonCard({ name }: { name: string }) {\r\n  const pokemon = await cachedGetPokemon(name)\r\n\r\n  if (!pokemon) {\r\n    return null\r\n  }\r\n\r\n  return (\r\n    <Card>\r\n      <CardContent className=\"flex flex-col items-center p-2\">\r\n        <div>\r\n          <PokemonImage name={pokemon.name} number={pokemon.id} />\r\n        </div>\r\n        <div className=\"text-center font-medium\">{pokemon.name}</div>\r\n      </CardContent>\r\n    </Card>\r\n  )\r\n}\r\n",
+      "content": "import { cache } from \"react\";\r\nimport { getPokemon } from \"@/registry/default/blocks/complex-component/lib/pokemon\";\r\nimport { Card, CardContent } from \"@/registry/default/ui/card\";\r\nimport { PokemonImage } from \"@/registry/default/blocks/complex-component/components/pokemon-image\";\r\n\r\nconst cachedGetPokemon = cache(getPokemon);\r\n\r\nexport async function PokemonCard({ name }: { name: string }) {\r\n  const pokemon = await cachedGetPokemon(name);\r\n\r\n  if (!pokemon) {\r\n    return null;\r\n  }\r\n\r\n  return (\r\n    <Card>\r\n      <CardContent className=\"flex flex-col items-center p-2\">\r\n        <div>\r\n          <PokemonImage name={pokemon.name} number={pokemon.id} />\r\n        </div>\r\n        <div className=\"text-center font-medium\">{pokemon.name}</div>\r\n      </CardContent>\r\n    </Card>\r\n  );\r\n}\r\n",
       "type": "registry:component"
     },
     {
       "path": "registry/default/blocks/complex-component/components/pokemon-image.tsx",
-      "content": "\"use client\"\r\n\r\n/* eslint-disable @next/next/no-img-element */\r\nimport { usePokemonImage } from \"@/registry/default/blocks/complex-component/hooks/use-pokemon\"\r\n\r\nexport function PokemonImage({\r\n  name,\r\n  number,\r\n}: {\r\n  name: string\r\n  number: number\r\n}) {\r\n  const imageUrl = usePokemonImage(number)\r\n\r\n  if (!imageUrl) {\r\n    return null\r\n  }\r\n\r\n  return <img src={imageUrl} alt={name} />\r\n}\r\n",
+      "content": "\"use client\";\r\n\r\n/* eslint-disable @next/next/no-img-element */\r\nimport { usePokemonImage } from \"@/registry/default/blocks/complex-component/hooks/use-pokemon\";\r\n\r\nexport function PokemonImage({\r\n  name,\r\n  number,\r\n}: {\r\n  name: string;\r\n  number: number;\r\n}) {\r\n  const imageUrl = usePokemonImage(number);\r\n\r\n  if (!imageUrl) {\r\n    return null;\r\n  }\r\n\r\n  return <img src={imageUrl} alt={name} />;\r\n}\r\n",
       "type": "registry:component"
     },
     {

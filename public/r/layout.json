@@ -1,14 +1,14 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "layout",
-  "type": "registry:component",
+  "type": "registry:ui",
   "title": "Layout",
   "description": "A layout component to be used at the root of every page.",
   "files": [
     {
       "path": "registry/default/ui/layout.tsx",
       "content": "import * as React from \"react\";\r\n\r\nimport { cn } from \"@/lib/utils\";\r\n\r\nconst Layout = ({\r\n  children,\r\n  className,\r\n}: {\r\n  children: React.ReactNode;\r\n  className?: string;\r\n}) => {\r\n  return (\r\n    <div\r\n      className={cn(\r\n        \"container flex flex-col h-full gap-2 mx-auto overflow-hidden\",\r\n        className\r\n      )}\r\n    >\r\n      {children}\r\n    </div>\r\n  );\r\n};\r\n\r\nexport { Layout };\r\n",
-      "type": "registry:component"
+      "type": "registry:ui"
     }
   ]
 }
