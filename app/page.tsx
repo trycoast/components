@@ -1,9 +1,10 @@
-import * as React from "react"
-import { OpenInV0Button } from "@/components/open-in-v0-button"
-import { HelloWorld } from "@/registry/new-york/blocks/hello-world/hello-world"
-import { ExampleForm } from "@/registry/new-york/blocks/example-form/example-form"
-import PokemonPage from "@/registry/new-york/blocks/complex-component/page"
-import { ExampleCard } from "@/registry/new-york/blocks/example-with-css/example-card"
+import * as React from "react";
+import { OpenInV0Button } from "@/components/open-in-v0-button";
+import { HelloWorld } from "@/registry/default/blocks/hello-world/hello-world";
+import { ExampleForm } from "@/registry/default/blocks/example-form/example-form";
+import PokemonPage from "@/registry/default/blocks/complex-component/page";
+import { ExampleCard } from "@/registry/default/blocks/example-with-css/example-card";
+import { Layout } from "@/registry/default/ui/layout";
 // This page displays items from the custom registry.
 // You are free to implement this with your own design as needed.
 
@@ -64,7 +65,15 @@ export default function Home() {
             <ExampleCard />
           </div>
         </div>
+
+        <div className="flex flex-col gap-4 border rounded-lg p-4 min-h-[450px] relative">
+          <Layout>
+            <div className="flex flex-col justify-center text-center ">
+              Layout
+            </div>
+          </Layout>
+        </div>
       </main>
     </div>
-  )
+  );
 }

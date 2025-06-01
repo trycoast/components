@@ -11,7 +11,7 @@
       "registryDependencies": ["button"],
       "files": [
         {
-          "path": "registry/new-york/blocks/hello-world/hello-world.tsx",
+          "path": "registry/default/blocks/hello-world/hello-world.tsx",
           "type": "registry:component"
         }
       ]
@@ -25,7 +25,7 @@
       "registryDependencies": ["button", "input", "label", "textarea", "card"],
       "files": [
         {
-          "path": "registry/new-york/blocks/example-form/example-form.tsx",
+          "path": "registry/default/blocks/example-form/example-form.tsx",
           "type": "registry:component"
         }
       ]
@@ -38,24 +38,24 @@
       "registryDependencies": ["card"],
       "files": [
         {
-          "path": "registry/new-york/blocks/complex-component/page.tsx",
+          "path": "registry/default/blocks/complex-component/page.tsx",
           "type": "registry:page",
           "target": "app/pokemon/page.tsx"
         },
         {
-          "path": "registry/new-york/blocks/complex-component/components/pokemon-card.tsx",
+          "path": "registry/default/blocks/complex-component/components/pokemon-card.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york/blocks/complex-component/components/pokemon-image.tsx",
+          "path": "registry/default/blocks/complex-component/components/pokemon-image.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york/blocks/complex-component/lib/pokemon.ts",
+          "path": "registry/default/blocks/complex-component/lib/pokemon.ts",
           "type": "registry:lib"
         },
         {
-          "path": "registry/new-york/blocks/complex-component/hooks/use-pokemon.ts",
+          "path": "registry/default/blocks/complex-component/hooks/use-pokemon.ts",
           "type": "registry:hook"
         }
       ]
@@ -67,11 +67,23 @@
       "description": "A login form with a CSS file.",
       "files": [
         {
-          "path": "registry/new-york/blocks/example-with-css/example-card.tsx",
+          "path": "registry/default/blocks/example-with-css/example-card.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/new-york/blocks/example-with-css/example-card.css",
+          "path": "registry/default/blocks/example-with-css/example-card.css",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "layout",
+      "type": "registry:component",
+      "title": "Layout",
+      "description": "A layout component to be used at the root of every page.",
+      "files": [
+        {
+          "path": "registry/default/ui/layout.tsx",
           "type": "registry:component"
         }
       ]
