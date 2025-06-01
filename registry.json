@@ -87,6 +87,36 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "group",
+      "type": "registry:ui",
+      "title": "Group",
+      "description": "Groups items such as buttons together.",
+      "files": [
+        {
+          "path": "registry/default/ui/group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "A tanstack-based data table.",
+      "registryDependencies": ["button", "checkbox", "dropdown-menu", "input", "label", "select", "table"],
+      "dependencies": ["@tanstack/react-table"],
+      "files": [
+        {
+          "path": "registry/default/ui/data-table.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/ui/group.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

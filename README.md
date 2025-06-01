@@ -1,11 +1,14 @@
 # registry-template
 
+## How to use (simplified)
+
 1. Add your component to the registry/default/{blocks | ui}/{component} folder.
 2. Add your component to the registry.json (don't forget to include dependencies)
-3. Start the server: `yarn dev` | `pnpm dev`
-4. **Optional:** Install your component to an external project: `npx shadcn add http://localhost:3000/r/{component}.json`
+3. Build the registry: `pnpm shadcn build` | `yarn shadcn build`
+4. Start the server: `yarn dev` | `pnpm dev`
+5. **Optional:** Install your component to an external project: `npx shadcn add http://localhost:3000/r/{component}.json`
 
-## ShadCN Registry
+## Docs
 
 You can use the `shadcn` CLI to run your own component registry. Running your own
 component registry allows you to distribute your custom components, hooks, pages, and
