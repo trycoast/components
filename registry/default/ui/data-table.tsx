@@ -237,30 +237,28 @@ function Header() {
   const { table, config } = useTableContext();
 
   return (
-    <Content>
-      <TableHeader className="sticky top-0">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {config?.enableRowSelection && (
-              <TableHead>
-                <div className="flex items-center justify-center">
-                  <Checkbox
-                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                  />
-                </div>
-              </TableHead>
-            )}
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id} className={header.isPlaceholder ? "hidden" : ""}>
-                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-    </Content>
+    <TableHeader className="sticky top-0">
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id}>
+          {config?.enableRowSelection && (
+            <TableHead>
+              <div className="flex items-center justify-center">
+                <Checkbox
+                  checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+                  onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                  aria-label="Select all"
+                />
+              </div>
+            </TableHead>
+          )}
+          {headerGroup.headers.map((header) => (
+            <TableHead key={header.id} className={header.isPlaceholder ? "hidden" : ""}>
+              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+            </TableHead>
+          ))}
+        </TableRow>
+      ))}
+    </TableHeader>
   );
 }
 
@@ -268,32 +266,30 @@ function Body() {
   const { table, config } = useTableContext();
 
   return (
-    <Content>
-      <TableBody>
-        {table.getRowModel().rows.length > 0 ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-              {config?.enableRowSelection && (
-                <TableCell>
-                  <div className="flex items-center justify-center">
-                    <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-                  </div>
-                </TableCell>
-              )}
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-              ))}
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-24 text-center">
-              No results.
-            </TableCell>
+    <TableBody>
+      {table.getRowModel().rows.length > 0 ? (
+        table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+            {config?.enableRowSelection && (
+              <TableCell>
+                <div className="flex items-center justify-center">
+                  <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+                </div>
+              </TableCell>
+            )}
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+            ))}
           </TableRow>
-        )}
-      </TableBody>
-    </Content>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
   );
 }
 
