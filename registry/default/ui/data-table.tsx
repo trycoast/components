@@ -252,11 +252,18 @@ function Header({ className }: { className?: String }) {
               </div>
             </TableHead>
           )}
-          {headerGroup.headers.map((header) => (
-            <TableHead key={header.id} className={header.isPlaceholder ? "hidden" : ""}>
-              {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-            </TableHead>
-          ))}
+          {headerGroup.headers.map((header) => {
+            const columnDef = header.column.columnDef as ExtendedColumnDef<unknown, unknown>;
+
+            if (columnDef.meta?.disableDisplay) {
+              return null;
+            }
+            return (
+              <TableHead key={header.id} className={header.isPlaceholder ? "hidden" : ""}>
+                {header.isPlaceholder ? null : flexRender(columnDef.header, header.getContext())}
+              </TableHead>
+            );
+          })}
         </TableRow>
       ))}
     </TableHeader>
@@ -278,9 +285,14 @@ function Body() {
                 </div>
               </TableCell>
             )}
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-            ))}
+            {row.getVisibleCells().map((cell) => {
+              const columnDef = cell.column.columnDef as ExtendedColumnDef<unknown, unknown>;
+
+              if (columnDef.meta?.disableDisplay) {
+                return null;
+              }
+              return <TableCell key={cell.id}>{flexRender(columnDef.cell, cell.getContext())}</TableCell>;
+            })}
           </TableRow>
         ))
       ) : (
