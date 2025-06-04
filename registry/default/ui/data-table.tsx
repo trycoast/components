@@ -134,7 +134,7 @@ function useDebounce(value: string, delay: number) {
   return debouncedValue;
 }
 
-function Toolbar({ className }: { className?: string }) {
+function Toolbar({ className, children, search = true }: { className?: string; children?: React.ReactNode; search?: boolean }) {
   const { table, globalFilter, setGlobalFilter } = useTableContext();
   const [inputValue, setInputValue] = React.useState(globalFilter);
 
@@ -155,8 +155,8 @@ function Toolbar({ className }: { className?: string }) {
         <div className="flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                <Settings2 size={15} /> View
+              <Button variant="outline" className="" size="icon">
+                <Settings2 size={15} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -171,8 +171,9 @@ function Toolbar({ className }: { className?: string }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Input placeholder="Search..." className="max-w-xs" value={inputValue} onChange={handleInputChange} />
+        {search && <Input placeholder="Search..." className="max-w-xs" value={inputValue} onChange={handleInputChange} />}
       </div>
+      <div>{children}</div>
     </div>
   );
 }
@@ -233,11 +234,11 @@ function Content({ children }: { children?: React.ReactNode }) {
   );
 }
 
-function Header() {
+function Header({ className }: { className?: String }) {
   const { table, config } = useTableContext();
 
   return (
-    <TableHeader className="sticky top-0">
+    <TableHeader className={cn("sticky top-0", className)}>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {config?.enableRowSelection && (
