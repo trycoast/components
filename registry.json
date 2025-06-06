@@ -125,21 +125,52 @@
       "description": "A hook to manage persistent state.",
       "files": [
         {
-          "path": "registry/default/hooks/use-persistent-state.tsx",
+          "path": "registry/default/hooks/use-persistent-state.ts",
           "type": "registry:hook"
         }
       ]
     },
     {
-      "name": "use-modal",
-      "type": "registry:hook",
-      "title": "Modal Manager",
-      "description": "A hook that helps you lazily load and manage the modal render state.",
+      "name": "modal",
+      "type": "registry:ui",
+      "title": "Modal",
+      "description": "A modal",
       "dependencies": ["@radix-ui/react-dialog"],
       "files": [
         {
-          "path": "registry/default/hooks/use-modal.tsx",
+          "path": "registry/default/hooks/use-modal-manager.ts",
           "type": "registry:hook"
+        },
+        {
+          "path": "registry/default/providers/modal-provider.tsx",
+          "type": "registry:lib",
+          "target": "providers/modal-provider.tsx"
+        },
+        {
+          "path": "registry/default/ui/modal.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "theme-toggle",
+      "type": "registry:ui",
+      "title": "Theme Toggle",
+      "description": "A toggle button for swapping between dark and light mode.",
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "registry/default/hooks/use-theme.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "registry/default/providers/theme-provider.tsx",
+          "type": "registry:lib",
+          "target": "providers/theme-provider.tsx"
+        },
+        {
+          "path": "registry/default/ui/theme-toggle.tsx",
+          "type": "registry:ui"
         }
       ]
     }

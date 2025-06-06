@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function usePersistentState<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+export default function usePersistentState<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const getInitialValue = () => {
     if (typeof window === "undefined") return initialValue;
     try {
@@ -24,5 +24,3 @@ function usePersistentState<T>(key: string, initialValue: T): [T, React.Dispatch
 
   return [value, setValue];
 }
-
-export default usePersistentState;

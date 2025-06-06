@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "modal",
+  "type": "registry:ui",
+  "title": "Modal",
+  "description": "A modal",
+  "dependencies": [
+    "@radix-ui/react-dialog"
+  ],
+  "files": [
+    {
+      "path": "registry/default/hooks/use-modal-manager.ts",
+      "content": "import { useContext } from \"react\";\r\nimport { ModalProviderContext } from \"@/registry/default/providers/modal-provider\";\r\n\r\nexport default function useModalManager() {\r\n  const context = useContext(ModalProviderContext);\r\n\r\n  if (!context) {\r\n    throw new Error(\"useModalManager must be used within a ModalProvider\");\r\n  }\r\n\r\n  const { open, close } = context;\r\n\r\n  function register<Props>(Component: React.ComponentType<Props & { close: () => void }>) {\r\n    let currentId: symbol | null = null;\r\n\r\n    return {\r\n      open: (props: Props) => {\r\n        currentId = open(Component, props);\r\n      },\r\n      close: () => {\r\n        if (currentId) close(currentId);\r\n      },\r\n    };\r\n  }\r\n\r\n  return { register };\r\n}\r\n",
+      "type": "registry:hook"
+    },
+    {
+      "path": "registry/default/providers/modal-provider.tsx",
+      "content": "import { createContext, useState, type ComponentType, type ReactNode, useCallback } from \"react\";\r\n\r\ntype ModalEntry<Props = any> = {\r\n  id: symbol;\r\n  component: ComponentType<Props & { close: () => void }>;\r\n  props: Props;\r\n};\r\n\r\nexport const ModalProviderContext = createContext<{\r\n  open: <P>(component: ComponentType<P & { close: () => void }>, props: P) => symbol;\r\n  close: (id: symbol) => void;\r\n  modals: ModalEntry[];\r\n} | null>(null);\r\n\r\nexport function ModalProvider({ children }: { children: ReactNode }) {\r\n  const [modals, setModals] = useState<ModalEntry[]>([]);\r\n\r\n  const open = useCallback(<P,>(component: ComponentType<P & { close: () => void }>, props: P) => {\r\n    const id = Symbol();\r\n    setModals((prev) => [...prev, { id, component, props }]);\r\n    return id;\r\n  }, []);\r\n\r\n  const close = useCallback((id: symbol) => {\r\n    setModals((prev) => prev.filter((m) => m.id !== id));\r\n  }, []);\r\n\r\n  return (\r\n    <ModalProviderContext.Provider value={{ open, close, modals }}>\r\n      {children}\r\n      {modals.map(({ component: Component, props, id }) => (\r\n        <Component key={id.toString()} {...props} close={() => close(id)} />\r\n      ))}\r\n    </ModalProviderContext.Provider>\r\n  );\r\n}\r\n",
+      "type": "registry:lib",
+      "target": "providers/modal-provider.tsx"
+    },
+    {
+      "path": "registry/default/ui/modal.tsx",
+      "content": "import { cn } from \"@/lib/utils\";\r\nimport * as Dialog from \"@radix-ui/react-dialog\";\r\n\r\ntype ModalProps = {\r\n  className?: string;\r\n  children: React.ReactNode;\r\n  open: boolean;\r\n  onOpenChange: (open: boolean) => void;\r\n};\r\n\r\nexport default function Modal({ className, children, open, onOpenChange }: ModalProps) {\r\n  return (\r\n    <Dialog.Root open={open} onOpenChange={onOpenChange}>\r\n      <Dialog.Portal>\r\n        <Dialog.Overlay\r\n          className={cn(\r\n            \"fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0\"\r\n          )}\r\n        />\r\n        <Dialog.Title className=\"hidden\" />\r\n        <Dialog.Content\r\n          aria-labelledby={undefined}\r\n          aria-describedby={undefined}\r\n          className={cn(\r\n            \"fixed left-[50%] top-[50%] z-50 grid translate-x-[-50%] translate-y-[-50%] shadow-lg duration-200\",\r\n            \"data-[state=open]:animate-in data-[state=closed]:animate-out\",\r\n            \"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0\",\r\n            \"data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95\",\r\n            className\r\n          )}\r\n        >\r\n          {children}\r\n        </Dialog.Content>\r\n      </Dialog.Portal>\r\n    </Dialog.Root>\r\n  );\r\n}\r\n",
+      "type": "registry:ui"
+    }
+  ]
+}
