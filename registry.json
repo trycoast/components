@@ -123,6 +123,7 @@
       "type": "registry:hook",
       "title": "Persistent State",
       "description": "A hook to manage persistent state.",
+      "dependencies": ["zustand"],
       "files": [
         {
           "path": "registry/default/hooks/use-persistent-state.ts",
