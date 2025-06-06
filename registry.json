@@ -129,6 +129,19 @@
           "type": "registry:hook"
         }
       ]
+    },
+    {
+      "name": "use-modal",
+      "type": "registry:hook",
+      "title": "Modal Manager",
+      "description": "A hook that helps you lazily load and manage the modal render state.",
+      "dependencies": ["@radix-ui/react-dialog"],
+      "files": [
+        {
+          "path": "registry/default/hooks/use-modal.tsx",
+          "type": "registry:hook"
+        }
+      ]
     }
   ]
 }
