@@ -117,6 +117,18 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "use-persistent-state",
+      "type": "registry:hook",
+      "title": "Persistent State",
+      "description": "A hook to manage persistent state.",
+      "files": [
+        {
+          "path": "registry/default/hooks/use-persistent-state.tsx",
+          "type": "registry:hook"
+        }
+      ]
     }
   ]
 }

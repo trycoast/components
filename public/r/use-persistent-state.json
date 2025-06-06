@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-persistent-state",
+  "type": "registry:hook",
+  "title": "Persistent State",
+  "description": "A hook to manage persistent state.",
+  "files": [
+    {
+      "path": "registry/default/hooks/use-persistent-state.tsx",
+      "content": "import { useState, useEffect } from \"react\";\r\n\r\nfunction usePersistentState<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {\r\n  const getInitialValue = () => {\r\n    if (typeof window === \"undefined\") return initialValue;\r\n    try {\r\n      const storedValue = localStorage.getItem(key);\r\n      return storedValue ? JSON.parse(storedValue) : initialValue;\r\n    } catch (error) {\r\n      console.error(`Error reading persistent key \"${key}\":`, error);\r\n      return initialValue;\r\n    }\r\n  };\r\n\r\n  const [value, setValue] = useState<T>(getInitialValue);\r\n\r\n  useEffect(() => {\r\n    try {\r\n      localStorage.setItem(key, JSON.stringify(value));\r\n    } catch (error) {\r\n      console.error(`Error writing persistent key \"${key}\":`, error);\r\n    }\r\n  }, [key, value]);\r\n\r\n  return [value, setValue];\r\n}\r\n\r\nexport default usePersistentState;\r\n",
+      "type": "registry:hook"
+    }
+  ]
+}
