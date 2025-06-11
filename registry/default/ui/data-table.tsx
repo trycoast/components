@@ -60,6 +60,7 @@ function Root<TData, TValue>({
   data,
   config,
   children,
+  onRowSelectionChange,
   ...props
 }: {
   key?: string;
@@ -68,13 +69,13 @@ function Root<TData, TValue>({
   config?: Config;
   className?: string;
   children?: React.ReactNode;
+  onRowSelectionChange?: (selectedRows: TData[]) => void;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() =>
     props.key ? JSON.parse(localStorage.getItem(`${props.key}-columns`) || "{}") : {}
   );
-  const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
   React.useEffect(() => {
@@ -89,7 +90,6 @@ function Root<TData, TValue>({
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
       columnFilters,
       globalFilter,
     },
@@ -99,7 +99,6 @@ function Root<TData, TValue>({
       },
     },
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -110,6 +109,14 @@ function Root<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+
+  React.useEffect(() => {
+    if (onRowSelectionChange) {
+      requestIdleCallback(() => {
+        onRowSelectionChange(table.getSelectedRowModel().rows.map((row) => row.original));
+      });
+    }
+  }, [table.getState().rowSelection, onRowSelectionChange]);
 
   return (
     <TableContext.Provider value={{ table, config, globalFilter, setGlobalFilter }}>
@@ -187,7 +194,7 @@ function Pagination({ className }: { className?: string }) {
         {table.getFilteredSelectedRowModel().rows.length} of {new Intl.NumberFormat("en-US").format(table.getFilteredRowModel().rows.length)} row(s) selected.
       </div>
       <div className="flex items-center gap-4">
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="items-center hidden gap-2 lg:flex">
           <Label className="text-sm font-normal">Rows per page</Label>
           <Select value={`${table.getState().pagination.pageSize}`} onValueChange={(value) => table.setPageSize(Number(value))}>
             <SelectTrigger className="w-20" size="sm">
@@ -227,7 +234,7 @@ function Pagination({ className }: { className?: string }) {
 function Content({ children }: { children?: React.ReactNode }) {
   return (
     <div data-slot="table-container" className="h-full overflow-y-auto">
-      <table data-slot="table" className="w-full caption-bottom text-sm">
+      <table data-slot="table" className="w-full text-sm caption-bottom">
         {children}
       </table>
     </div>
