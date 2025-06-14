@@ -1,18 +1,11 @@
 "use client";
 
 import * as React from "react";
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/registry/default/ui/card";
-import { Input } from "@/registry/default/ui/input";
-import { Label } from "@/registry/default/ui/label";
-import { Button } from "@/registry/default/ui/button";
-import { Textarea } from "@/registry/default/ui/textarea";
+import { Card, CardTitle, CardHeader, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 
 const exampleFormSchema = z.object({
@@ -49,11 +42,10 @@ export function ExampleForm() {
       if (!result.success) {
         setState({
           ...state,
-          errors: Object.fromEntries(
-            Object.entries(result.error.flatten().fieldErrors).map(
-              ([key, value]) => [key, value?.[0] ?? ""]
-            )
-          ) as Record<keyof typeof state.errors, string>,
+          errors: Object.fromEntries(Object.entries(result.error.flatten().fieldErrors).map(([key, value]) => [key, value?.[0] ?? ""])) as Record<
+            keyof typeof state.errors,
+            string
+          >,
         });
         setPending(false);
         return;
@@ -69,19 +61,11 @@ export function ExampleForm() {
       <Card>
         <CardHeader>
           <CardTitle>How can we help?</CardTitle>
-          <CardDescription>
-            Need help with your project? We&apos;re here to assist you.
-          </CardDescription>
+          <CardDescription>Need help with your project? We&apos;re here to assist you.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
-          <div
-            className="group/field grid gap-2"
-            data-invalid={!!state.errors?.name}
-          >
-            <Label
-              htmlFor="name"
-              className="group-data-[invalid=true]/field:text-destructive"
-            >
+          <div className="group/field grid gap-2" data-invalid={!!state.errors?.name}>
+            <Label htmlFor="name" className="group-data-[invalid=true]/field:text-destructive">
               Name <span aria-hidden="true">*</span>
             </Label>
             <Input
@@ -100,14 +84,8 @@ export function ExampleForm() {
               </p>
             )}
           </div>
-          <div
-            className="group/field grid gap-2"
-            data-invalid={!!state.errors?.email}
-          >
-            <Label
-              htmlFor="email"
-              className="group-data-[invalid=true]/field:text-destructive"
-            >
+          <div className="group/field grid gap-2" data-invalid={!!state.errors?.email}>
+            <Label htmlFor="email" className="group-data-[invalid=true]/field:text-destructive">
               Email <span aria-hidden="true">*</span>
             </Label>
             <Input
@@ -126,14 +104,8 @@ export function ExampleForm() {
               </p>
             )}
           </div>
-          <div
-            className="group/field grid gap-2"
-            data-invalid={!!state.errors?.message}
-          >
-            <Label
-              htmlFor="message"
-              className="group-data-[invalid=true]/field:text-destructive"
-            >
+          <div className="group/field grid gap-2" data-invalid={!!state.errors?.message}>
+            <Label htmlFor="message" className="group-data-[invalid=true]/field:text-destructive">
               Message <span aria-hidden="true">*</span>
             </Label>
             <Textarea

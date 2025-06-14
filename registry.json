@@ -154,6 +154,20 @@
       ]
     },
     {
+      "name": "multi-select",
+      "type": "registry:ui",
+      "title": "Multi Select",
+      "description": "A multi-select input component with combobox search and optional item creation callback.",
+      "dependencies": ["@radix-ui/react-dialog", "class-variance-authority", "lucide-react"],
+      "registryDependencies": ["button", "badge", "command", "popover", "separator"],
+      "files": [
+        {
+          "path": "registry/default/ui/multi-select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "theme-toggle",
       "type": "registry:ui",
       "title": "Theme Toggle",

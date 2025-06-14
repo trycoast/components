@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Button } from "@/registry/default/ui/button";
-import { Checkbox } from "@/registry/default/ui/checkbox";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/registry/default/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Group } from "@/registry/default/ui/group";
-import { Input } from "@/registry/default/ui/input";
-import { Label } from "@/registry/default/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/registry/default/ui/select";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/registry/default/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Settings2 } from "lucide-react";
 import {
   type ColumnDef,
