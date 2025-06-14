@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export interface Option {
   value: string;
   label: string;
-  context: string | number;
+  context?: string | number;
 }
 
 interface ChecklistProps {
@@ -44,7 +44,7 @@ export function Checklist({ label, collapsed = false, options, selected, setSele
                 <Checkbox checked={selected.includes(option.value)} onCheckedChange={() => toggle(option.value)} />
                 <span className="text-sm">{option.label}</span>
               </div>
-              <span className="text-xs">{option.context}</span>
+              <span className="text-xs">{option?.context}</span>
             </label>
           ))}
         </div>
