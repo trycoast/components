@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Settings2 } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Settings2, TriangleIcon } from "lucide-react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -24,6 +24,26 @@ import {
   type Table as ReactTable,
 } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
+
+import { cva, type VariantProps } from "class-variance-authority";
+
+const variants = cva("", {
+  variants: {
+    variant: {
+      default: "",
+      compact: "p-1",
+    },
+    size: {
+      default: "",
+      xs: "text-xs",
+      sm: "text-sm",
+    },
+  },
+  defaultVariants: {
+    size: "sm",
+    variant: "default",
+  },
+});
 
 interface TableContextValue<TData> {
   table: ReactTable<TData>;
@@ -49,6 +69,8 @@ export interface Config {
 
 interface Meta {
   disableDisplay?: boolean;
+  enableSort?: boolean;
+  justify?: "start" | "center" | "end";
 }
 
 export type ExtendedColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
@@ -158,7 +180,7 @@ function Toolbar({ className, children, search = true }: { className?: string; c
 
   return (
     <div className={cn("flex justify-between", className)}>
-      <div className="flex items-center w-full gap-1 mb-1">
+      <div className="flex items-center w-full gap-1">
         <div className="flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -189,7 +211,7 @@ function Pagination({ className }: { className?: string }) {
   const { table } = useTableContext();
 
   return (
-    <div className={cn("flex items-center justify-between w-full gap-4 my-1", className)}>
+    <div className={cn("flex items-center justify-between w-full gap-4", className)}>
       <div className="flex text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of {new Intl.NumberFormat("en-US").format(table.getFilteredRowModel().rows.length)} row(s) selected.
       </div>
@@ -233,15 +255,23 @@ function Pagination({ className }: { className?: string }) {
 
 function Content({ children }: { children?: React.ReactNode }) {
   return (
-    <div data-slot="table-container" className="h-full overflow-y-auto">
-      <table data-slot="table" className="w-full text-sm caption-bottom">
+    <div data-slot="table-container" className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-foreground scrollbar-track-background">
+      <table data-slot="table" className="w-full caption-bottom">
         {children}
       </table>
     </div>
   );
 }
 
-function Header({ className }: { className?: String }) {
+function Header({
+  size,
+  className,
+  variant,
+}: {
+  variant?: VariantProps<typeof variants>["variant"];
+  size?: VariantProps<typeof variants>["size"];
+  className?: string;
+}) {
   const { table, config } = useTableContext();
 
   return (
@@ -249,7 +279,7 @@ function Header({ className }: { className?: String }) {
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id}>
           {config?.enableRowSelection && (
-            <TableHead>
+            <TableHead className={cn(variants({ variant, size }))}>
               <div className="flex items-center justify-center">
                 <Checkbox
                   checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
@@ -260,14 +290,44 @@ function Header({ className }: { className?: String }) {
             </TableHead>
           )}
           {headerGroup.headers.map((header) => {
+            const column = header.column;
             const columnDef = header.column.columnDef as ExtendedColumnDef<unknown, unknown>;
 
             if (columnDef.meta?.disableDisplay) {
               return null;
             }
+
+            const justify = columnDef.meta?.justify || "start";
+
+            if (columnDef.meta?.enableSort) {
+              const isSortedAsc = column.getIsSorted() === "asc";
+              const isSortedDesc = column.getIsSorted() === "desc";
+
+              return (
+                <TableHead
+                  className={cn(
+                    "cursor-pointer flex gap-1.5 items-center",
+                    justify === "end" && "flex-row-reverse",
+                    justify === "center" && "justify-center",
+                    variants({ variant, size })
+                  )}
+                  key={header.id}
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                  {flexRender(columnDef.header, header.getContext())}
+                  <div className="flex flex-col gap-[1.5px]">
+                    <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25", isSortedAsc && "text-foreground/100")} />
+                    <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25 rotate-180", isSortedDesc && "text-foreground/100")} />
+                  </div>
+                </TableHead>
+              );
+            }
+
             return (
-              <TableHead key={header.id} className={header.isPlaceholder ? "hidden" : ""}>
-                {header.isPlaceholder ? null : flexRender(columnDef.header, header.getContext())}
+              <TableHead className={cn(variants({ variant, size }))} key={header.id}>
+                <div className={cn("flex gap-1.5 items-center", justify === "end" && "flex-row-reverse", justify === "center" && "justify-center")}>
+                  {flexRender(columnDef.header, header.getContext())}
+                </div>
               </TableHead>
             );
           })}
@@ -277,7 +337,15 @@ function Header({ className }: { className?: String }) {
   );
 }
 
-function Body() {
+function Body({
+  size,
+  className,
+  variant,
+}: {
+  variant?: VariantProps<typeof variants>["variant"];
+  size?: VariantProps<typeof variants>["size"];
+  className?: string;
+} = {}) {
   const { table, config } = useTableContext();
 
   return (
@@ -286,7 +354,7 @@ function Body() {
         table.getRowModel().rows.map((row) => (
           <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
             {config?.enableRowSelection && (
-              <TableCell>
+              <TableCell className={cn(variants({ variant, size, className }))}>
                 <div className="flex items-center justify-center">
                   <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
                 </div>
@@ -295,16 +363,26 @@ function Body() {
             {row.getVisibleCells().map((cell) => {
               const columnDef = cell.column.columnDef as ExtendedColumnDef<unknown, unknown>;
 
+              const justify = columnDef.meta?.justify || "start";
+
               if (columnDef.meta?.disableDisplay) {
                 return null;
               }
-              return <TableCell key={cell.id}>{flexRender(columnDef.cell, cell.getContext())}</TableCell>;
+
+              return (
+                <TableCell
+                  className={cn(justify === "end" && "text-right", justify === "center" && "text-center", variants({ variant, size, className }))}
+                  key={cell.id}
+                >
+                  {flexRender(columnDef.cell, cell.getContext())}
+                </TableCell>
+              );
             })}
           </TableRow>
         ))
       ) : (
         <TableRow>
-          <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-24 text-center">
+          <TableCell colSpan={table.getVisibleLeafColumns().length} className={cn("text-center h-24", variants({ variant, size, className }))}>
             No results.
           </TableCell>
         </TableRow>
