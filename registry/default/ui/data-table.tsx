@@ -304,20 +304,20 @@ function Header({
               const isSortedDesc = column.getIsSorted() === "desc";
 
               return (
-                <TableHead
-                  className={cn(
-                    "cursor-pointer flex gap-1.5 items-center",
-                    justify === "end" && "flex-row-reverse",
-                    justify === "center" && "justify-center",
-                    variants({ variant, size })
-                  )}
-                  key={header.id}
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                  {flexRender(columnDef.header, header.getContext())}
-                  <div className="flex flex-col gap-[1.5px]">
-                    <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25", isSortedAsc && "text-foreground/100")} />
-                    <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25 rotate-180", isSortedDesc && "text-foreground/100")} />
+                <TableHead className={cn(variants({ variant, size }))} key={header.id} onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                  <div
+                    className={cn(
+                      "cursor-pointer flex gap-1.5 items-center",
+                      justify === "end" && "flex-row-reverse",
+                      justify === "center" && "justify-center",
+                      variants({ variant, size })
+                    )}
+                  >
+                    {flexRender(columnDef.header, header.getContext())}
+                    <div className="flex flex-col gap-[1.5px]">
+                      <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25", isSortedAsc && "text-foreground/100")} />
+                      <TriangleIcon className={cn("w-1.5 h-1.5 text-foreground/25 rotate-180", isSortedDesc && "text-foreground/100")} />
+                    </div>
                   </div>
                 </TableHead>
               );
