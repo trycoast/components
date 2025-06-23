@@ -65,12 +65,14 @@ const useTableContext = <TData,>(): TableContextValue<TData> => {
 export interface Config {
   enableRowSelection?: boolean;
   initialPageSize?: number;
+  initialSortBy?: string;
 }
 
 interface Meta {
   disableDisplay?: boolean;
   enableSort?: boolean;
   justify?: "start" | "center" | "end";
+  className?: string;
 }
 
 export type ExtendedColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
@@ -93,7 +95,7 @@ function Root<TData, TValue>({
   children?: React.ReactNode;
   onRowSelectionChange?: (selectedRows: TData[]) => void;
 }) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(config?.initialSortBy ? [{ id: config.initialSortBy, desc: true }] : []);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() =>
     props.key ? JSON.parse(localStorage.getItem(`${props.key}-columns`) || "{}") : {}
@@ -339,12 +341,10 @@ function Header({
 
 function Body({
   size,
-  className,
   variant,
 }: {
   variant?: VariantProps<typeof variants>["variant"];
   size?: VariantProps<typeof variants>["size"];
-  className?: string;
 } = {}) {
   const { table, config } = useTableContext();
 
@@ -352,9 +352,13 @@ function Body({
     <TableBody>
       {table.getRowModel().rows.length > 0 ? (
         table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && "selected"}
+            className="border-0 hover:bg-foreground/5 data-[state=selected]:bg-foreground/5"
+          >
             {config?.enableRowSelection && (
-              <TableCell className={cn(variants({ variant, size, className }))}>
+              <TableCell className={cn(variants({ variant, size }))}>
                 <div className="flex items-center justify-center">
                   <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
                 </div>
@@ -364,6 +368,7 @@ function Body({
               const columnDef = cell.column.columnDef as ExtendedColumnDef<unknown, unknown>;
 
               const justify = columnDef.meta?.justify || "start";
+              const className = columnDef.meta?.className || "";
 
               if (columnDef.meta?.disableDisplay) {
                 return null;
@@ -371,7 +376,7 @@ function Body({
 
               return (
                 <TableCell
-                  className={cn(justify === "end" && "text-right", justify === "center" && "text-center", variants({ variant, size, className }))}
+                  className={cn(justify === "end" && "text-right", justify === "center" && "text-center", variants({ variant, size }), className)}
                   key={cell.id}
                 >
                   {flexRender(columnDef.cell, cell.getContext())}
@@ -382,7 +387,7 @@ function Body({
         ))
       ) : (
         <TableRow>
-          <TableCell colSpan={table.getVisibleLeafColumns().length} className={cn("text-center h-24", variants({ variant, size, className }))}>
+          <TableCell colSpan={table.getVisibleLeafColumns().length} className={cn("text-center h-24", variants({ variant, size }))}>
             No results.
           </TableCell>
         </TableRow>
