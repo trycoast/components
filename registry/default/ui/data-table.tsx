@@ -24,7 +24,6 @@ import {
   type Table as ReactTable,
 } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
-
 import { cva, type VariantProps } from "class-variance-authority";
 
 const variants = cva("", {
@@ -66,6 +65,7 @@ export interface Config {
   enableRowSelection?: boolean;
   initialPageSize?: number;
   initialSortBy?: string;
+  initialColumnVisibility?: VisibilityState;
 }
 
 interface Meta {
@@ -97,9 +97,19 @@ function Root<TData, TValue>({
 }) {
   const [sorting, setSorting] = React.useState<SortingState>(config?.initialSortBy ? [{ id: config.initialSortBy, desc: true }] : []);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() =>
-    props.key ? JSON.parse(localStorage.getItem(`${props.key}-columns`) || "{}") : {}
-  );
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
+    if (props.key) {
+      const storedVisibility = localStorage.getItem(`${props.key}-columns`);
+      return storedVisibility ? JSON.parse(storedVisibility) : {};
+    }
+
+    if (config?.initialColumnVisibility) {
+      return config.initialColumnVisibility;
+    }
+
+    return {};
+  });
+
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
   React.useEffect(() => {
