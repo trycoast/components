@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Settings2, TriangleIcon } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, LoaderCircleIcon, Settings2, TriangleIcon } from "lucide-react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -66,6 +66,9 @@ export interface Config {
   initialPageSize?: number;
   initialSortBy?: string;
   initialColumnVisibility?: VisibilityState;
+  onLoadMore?: () => void; // <- explicit callback
+  isLoadingMore?: boolean; // <- to show spinner
+  hasMore?: boolean; // <- disable button if false
 }
 
 interface Meta {
@@ -126,6 +129,8 @@ function Root<TData, TValue>({
       columnVisibility,
       columnFilters,
       globalFilter,
+      // ...(config?.onLoadMore ? { pagination: {} } : {}),
+      // ...(config?.onLoadMore ? { pagination: undefined } : {}),
     },
     initialState: {
       pagination: {
@@ -138,11 +143,14 @@ function Root<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    // getPaginationRowModel: getPaginationRowModel(),
+    ...(config?.onLoadMore ? {} : { getPaginationRowModel: getPaginationRowModel() }),
   });
+
+  console.log(data.length, "initial");
 
   React.useEffect(() => {
     if (onRowSelectionChange) {
@@ -399,6 +407,34 @@ function Body({
         <TableRow>
           <TableCell colSpan={table.getVisibleLeafColumns().length} className={cn("text-center h-24", variants({ variant, size }))}>
             No results.
+          </TableCell>
+        </TableRow>
+      )}
+
+      {config?.onLoadMore && (
+        <TableRow>
+          <TableCell
+            colSpan={table.getVisibleLeafColumns().length + (config?.enableRowSelection ? 1 : 0)}
+            className={cn("text-center", variants({ variant, size }))}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                config?.onLoadMore && config.onLoadMore();
+              }}
+              disabled={config.isLoadingMore || !config.hasMore}
+            >
+              {config.isLoadingMore ? (
+                <div className="flex items-center gap-1">
+                  <LoaderCircleIcon size={15} className="animate-spin" /> Loading
+                </div>
+              ) : config.hasMore ? (
+                "Load more"
+              ) : (
+                "No more data"
+              )}
+            </Button>
           </TableCell>
         </TableRow>
       )}
