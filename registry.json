@@ -80,7 +80,8 @@
       "name": "layout",
       "type": "registry:ui",
       "title": "Layout",
-      "description": "A layout component to be used at the root of every page.",
+      "description": "A layout component to be used at the root of your application as well as on every page.",
+      "dependencies": ["react-router-dom"],
       "files": [
         {
           "path": "registry/default/ui/layout.tsx",
