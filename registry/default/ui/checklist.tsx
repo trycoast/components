@@ -21,14 +21,14 @@ interface ChecklistProps {
 }
 
 export function Checklist({ label, collapsed = false, filter = false, options, selected, setSelected, className }: ChecklistProps) {
+  console.log(selected);
+
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const [search, setSearch] = useState("");
 
   const toggle = useCallback(
-    (value: string) => {
-      setSelected((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
-    },
-    [setSelected]
+    (value: string) => setSelected(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]),
+    [selected, setSelected]
   );
 
   const filteredOptions = useMemo(() => {
@@ -38,7 +38,7 @@ export function Checklist({ label, collapsed = false, filter = false, options, s
   }, [search, options]);
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2")}>
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsCollapsed(!isCollapsed)}>
         <div>
           {label}
@@ -51,10 +51,10 @@ export function Checklist({ label, collapsed = false, filter = false, options, s
         <>
           {filter && (
             <div className="px-2 py-1">
-              <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." className="bg-card" />
+              <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." className="shadow-none" />
             </div>
           )}
-          <div className="space-y-0.25">
+          <div className={cn("space-y-0.25 overflow-auto scrollbar-thin scrollbar-thumb-foreground scrollbar-track-background", className)}>
             {filteredOptions.map((option) => (
               <label key={option.value} className="flex items-center justify-between p-1 px-2 space-x-2 rounded-md cursor-pointer hover:bg-foreground/10">
                 <div className="flex items-center gap-2">
