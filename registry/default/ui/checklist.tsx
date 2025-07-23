@@ -40,9 +40,9 @@ export function Checklist({ label, collapsed = false, filter = false, options, s
   return (
     <div className={cn("space-y-2")}>
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsCollapsed(!isCollapsed)}>
-        <div>
+        <div className="text-sm">
           {label}
-          <span className="mx-2 text-sm text-foreground/50">{options.length}</span>
+          <span className="mx-2 text-foreground/50">{options.length}</span>
         </div>
         {isCollapsed ? <ChevronRight size={20} /> : <ChevronDown size={20} />}
       </div>
