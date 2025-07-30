@@ -199,7 +199,7 @@ function Toolbar({ className, children, search = true }: { className?: string; c
   }, []);
 
   return (
-    <div className={cn("flex justify-between", className)}>
+    <div className={cn("flex justify-between mb-1", className)}>
       <div className="flex items-center w-full gap-1">
         <div className="flex items-center">
           <DropdownMenu>
@@ -231,7 +231,7 @@ function Pagination({ className }: { className?: string }) {
   const { table } = useTableContext();
 
   return (
-    <div className={cn("flex items-center justify-between w-full gap-4", className)}>
+    <div className={cn("flex items-center justify-between w-full gap-4 mt-1", className)}>
       <div className="flex text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of {new Intl.NumberFormat("en-US").format(table.getFilteredRowModel().rows.length)} row(s) selected.
       </div>
