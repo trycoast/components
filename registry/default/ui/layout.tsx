@@ -4,7 +4,7 @@ import { type RouteObject, useRoutes } from "react-router-dom";
 
 const Root = ({ children }: { children: React.ReactNode }) => <div className="flex flex-col h-screen overflow-hidden">{children}</div>;
 
-const Block = ({ children, className }: { children: React.ReactNode; className?: string }) => <div className={cn("w-full p-4", className)}>{children}</div>;
+const Block = ({ children, className }: { children: React.ReactNode; className?: string }) => <div className={cn("w-full p-0", className)}>{children}</div>;
 
 const Container = ({ children, className }: { children: React.ReactNode; className?: string }) => {
   return <div className={cn("container [@media(min-width:1920px)]:max-w-[1920px] mx-auto h-full overflow-hidden py-2", className)}>{children}</div>;
