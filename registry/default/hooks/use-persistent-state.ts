@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist, PersistStorage } from "zustand/middleware";
+import { persist, type PersistStorage } from "zustand/middleware";
 
 interface PersistentState {
   [key: string]: any;
