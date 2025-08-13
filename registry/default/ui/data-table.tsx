@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, LoaderCircleIcon, Settings2, TriangleIcon } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, LoaderCircleIcon, SearchIcon, Settings2, TriangleIcon } from "lucide-react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -150,8 +150,6 @@ function Root<TData, TValue>({
     ...(config?.onLoadMore ? {} : { getPaginationRowModel: getPaginationRowModel() }),
   });
 
-  console.log(data.length, "initial");
-
   React.useEffect(() => {
     if (onRowSelectionChange) {
       requestIdleCallback(() => {
@@ -186,6 +184,7 @@ function useDebounce(value: string, delay: number) {
 function Toolbar({ className, children, search = true }: { className?: string; children?: React.ReactNode; search?: boolean }) {
   const { table, globalFilter, setGlobalFilter } = useTableContext();
   const [inputValue, setInputValue] = React.useState(globalFilter);
+  const [open, setOpen] = React.useState(false);
 
   // Use a debounced value to update global filter
   const debouncedValue = useDebounce(inputValue, 300);
@@ -220,57 +219,110 @@ function Toolbar({ className, children, search = true }: { className?: string; c
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {search && <Input placeholder="Search..." className="max-w-xs" value={inputValue} onChange={handleInputChange} />}
+
+        {/* {search && <Input placeholder="Search..." className="max-w-xs" value={inputValue} onChange={handleInputChange} />} */}
+        {search && (
+          <div className="flex gap-0">
+            <Button size="icon" variant="outline" onClick={() => setOpen(true)} className={cn(open && "rounded-r-none")}>
+              <SearchIcon />
+            </Button>
+
+            <div className={cn("overflow-hidden transition-[max-width] duration-300 ease-in-out", open ? "max-w-xs" : "max-w-0")}>
+              {open && (
+                <Input
+                  value={inputValue}
+                  autoFocus={open}
+                  onBlur={() => {
+                    if (!inputValue) setOpen(false);
+                  }}
+                  onChange={handleInputChange}
+                  className="w-72 focus-visible:border-ring-0 focus-visible:ring-ring/0 focus-visible:ring-[0px] rounded-l-none"
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
       <div>{children}</div>
     </div>
   );
 }
 
-function Pagination({ className }: { className?: string }) {
+function Pagination({ className, variant = "default" }: { className?: string; variant: string }) {
   const { table } = useTableContext();
 
-  return (
-    <div className={cn("flex items-center justify-between w-full gap-4 mt-1", className)}>
-      <div className="flex text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of {new Intl.NumberFormat("en-US").format(table.getFilteredRowModel().rows.length)} row(s) selected.
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="items-center hidden gap-2 lg:flex">
-          <Label className="text-sm font-normal">Rows per page</Label>
-          <Select value={`${table.getState().pagination.pageSize}`} onValueChange={(value) => table.setPageSize(Number(value))}>
-            <SelectTrigger className="w-20" size="sm">
-              <SelectValue placeholder={table.getState().pagination.pageSize.toString()} />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  if (variant === "default") {
+    return (
+      <div className={cn("flex items-center justify-between w-full gap-4 mt-1", className)}>
+        <div className="flex text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of {new Intl.NumberFormat("en-US").format(table.getFilteredRowModel().rows.length)} row(s) selected.
         </div>
+        <div className="flex items-center gap-4">
+          <div className="items-center hidden gap-2 lg:flex">
+            <Label className="text-sm font-normal">Rows per page</Label>
+            <Select value={`${table.getState().pagination.pageSize}`} onValueChange={(value) => table.setPageSize(Number(value))}>
+              <SelectTrigger className="w-20" size="sm">
+                <SelectValue placeholder={table.getState().pagination.pageSize.toString()} />
+              </SelectTrigger>
+              <SelectContent side="top">
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <SelectItem key={pageSize} value={`${pageSize}`}>
+                    {pageSize}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Group>
+            <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+              <ChevronFirst size={15} />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+              <ChevronLeft size={15} />
+            </Button>
+            <Button variant="outline" size="sm" className="items-center w-20 text-xs font-semibold" disabled>
+              Page {table.getState().pagination.pageIndex + 1}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              <ChevronRight size={15} />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+              <ChevronLast size={15} />
+            </Button>
+          </Group>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "minimal") {
+    const { pageIndex, pageSize } = table.getState().pagination;
+    const total = table.getFilteredRowModel().rows.length;
+
+    const start = total === 0 ? 0 : pageIndex * pageSize + 1;
+    const end = Math.min((pageIndex + 1) * pageSize, total);
+
+    const formatter = new Intl.NumberFormat();
+
+    return (
+      <div className={cn("flex items-center justify-between w-full gap-4 mt-1", className)}>
+        <span className="text-xs text-foreground/50">
+          {formatter.format(start)}–{formatter.format(end)} of {formatter.format(total)}
+        </span>
         <Group>
-          <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-            <ChevronFirst size={15} />
-          </Button>
           <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
             <ChevronLeft size={15} />
           </Button>
-          <Button variant="outline" size="sm" className="items-center w-20 text-xs font-semibold" disabled>
-            Page {table.getState().pagination.pageIndex + 1}
-          </Button>
+          {/* <Button variant="outline" size="sm" className="items-center w-20 text-xs font-semibold" disabled>
+          {formatter.format(start)}–{formatter.format(end)} of {formatter.format(total)}
+        </Button> */}
           <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             <ChevronRight size={15} />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-            <ChevronLast size={15} />
-          </Button>
         </Group>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 function Content({ children }: { children?: React.ReactNode }) {
@@ -442,4 +494,11 @@ function Body({
   );
 }
 
-export const DataTable = { Root, Toolbar, Pagination, Content, Header, Body };
+export const DataTable = {
+  Root: Root,
+  Toolbar,
+  Pagination,
+  Content,
+  Header,
+  Body,
+};
