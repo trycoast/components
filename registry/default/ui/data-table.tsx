@@ -1,3 +1,4 @@
+import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from "@/components/ui/context-menu";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -61,11 +62,18 @@ const useTableContext = <TData,>(): TableContextValue<TData> => {
   return context;
 };
 
+export type RowMenuItem<T = any> = {
+  label: React.ReactNode;
+  onSelect: (row: T) => void;
+  disabled?: boolean;
+};
+
 export interface Config {
   enableRowSelection?: boolean;
   initialPageSize?: number;
   initialSortBy?: string;
   initialColumnVisibility?: VisibilityState;
+  contextMenu?: (row: any) => RowMenuItem[] | null; // return null/[] to skip
   onLoadMore?: () => void; // <- explicit callback
   isLoadingMore?: boolean; // <- to show spinner
   hasMore?: boolean; // <- disable button if false
@@ -421,40 +429,79 @@ function Body({
   return (
     <TableBody>
       {table.getRowModel().rows.length > 0 ? (
-        table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            data-state={row.getIsSelected() && "selected"}
-            className="border-0 hover:bg-foreground/5 data-[state=selected]:bg-foreground/5"
-          >
-            {config?.enableRowSelection && (
-              <TableCell className={cn(variants({ variant, size }))}>
-                <div className="flex items-center justify-center">
-                  <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-                </div>
-              </TableCell>
-            )}
-            {row.getVisibleCells().map((cell) => {
-              const columnDef = cell.column.columnDef as ExtendedColumnDef<unknown, unknown>;
-
-              const justify = columnDef.meta?.justify || "start";
-              const className = columnDef.meta?.className || "";
-
-              if (columnDef.meta?.disableDisplay) {
-                return null;
-              }
-
-              return (
-                <TableCell
-                  className={cn(justify === "end" && "text-right", justify === "center" && "text-center", variants({ variant, size }), className)}
-                  key={cell.id}
-                >
-                  {flexRender(columnDef.cell, cell.getContext())}
+        table.getRowModel().rows.map((row) => {
+          const cells = (
+            <>
+              {config?.enableRowSelection && (
+                <TableCell className={cn(variants({ variant, size }))}>
+                  <div className="flex items-center justify-center">
+                    <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+                  </div>
                 </TableCell>
-              );
-            })}
-          </TableRow>
-        ))
+              )}
+
+              {row.getVisibleCells().map((cell) => {
+                const columnDef = cell.column.columnDef as ExtendedColumnDef<unknown, unknown>;
+                if (columnDef.meta?.disableDisplay) return null;
+
+                const justify = columnDef.meta?.justify || "start";
+                const className = columnDef.meta?.className || "";
+
+                return (
+                  <TableCell
+                    key={cell.id}
+                    className={cn(justify === "end" && "text-right", justify === "center" && "text-center", variants({ variant, size }), className)}
+                  >
+                    {flexRender(columnDef.cell, cell.getContext())}
+                  </TableCell>
+                );
+              })}
+            </>
+          );
+
+          // if no config or config returns no items, render as usual
+          const items = config?.contextMenu?.(row.original) ?? null;
+          if (!items || items.length === 0) {
+            return (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className="border-0 hover:bg-foreground/5 data-[state=selected]:bg-foreground/5"
+              >
+                {cells}
+              </TableRow>
+            );
+          }
+
+          // otherwise, wrap this row with a ContextMenu
+          return (
+            <ContextMenu
+              key={row.id}
+              onOpenChange={(open) => {
+                if (open) {
+                  // highlight while the context menu is open
+                  row.toggleSelected(true);
+                } else {
+                  // remove highlight after the menu closes
+                  row.toggleSelected(false);
+                }
+              }}
+            >
+              <ContextMenuTrigger asChild>
+                <TableRow data-state={row.getIsSelected() && "selected"} className="border-0 hover:bg-foreground/5 data-[state=selected]:bg-foreground/5">
+                  {cells}
+                </TableRow>
+              </ContextMenuTrigger>
+              <ContextMenuContent align="start">
+                {items.map((it, i) => (
+                  <ContextMenuItem key={i} disabled={it.disabled} onSelect={() => it.onSelect(row.original)}>
+                    {it.label}
+                  </ContextMenuItem>
+                ))}
+              </ContextMenuContent>
+            </ContextMenu>
+          );
+        })
       ) : (
         <TableRow>
           <TableCell colSpan={table.getVisibleLeafColumns().length} className={cn("text-center h-24", variants({ variant, size }))}>
@@ -469,14 +516,7 @@ function Body({
             colSpan={table.getVisibleLeafColumns().length + (config?.enableRowSelection ? 1 : 0)}
             className={cn("text-center", variants({ variant, size }))}
           >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                config?.onLoadMore && config.onLoadMore();
-              }}
-              disabled={config.isLoadingMore || !config.hasMore}
-            >
+            <Button variant="outline" size="sm" onClick={() => config?.onLoadMore?.()} disabled={config.isLoadingMore || !config.hasMore}>
               {config.isLoadingMore ? (
                 <div className="flex items-center gap-1">
                   <LoaderCircleIcon size={15} className="animate-spin" /> Loading
