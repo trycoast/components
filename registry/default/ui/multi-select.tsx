@@ -250,7 +250,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
 
               <CommandGroup>
                 <CommandItem key="all" onSelect={toggleAll} className="cursor-pointer justify-center">
-                  <span className="text-foreground/50">Select All</span>
+                  <span className="text-muted-foreground">Select All</span>
                 </CommandItem>
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value);
